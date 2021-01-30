@@ -30,6 +30,8 @@ private:
 	
 	glm::vec2 m_mousePosition;
 
+	bool isFleeing;
+
 	SpaceShip* m_pSpaceShip;
 	Target* m_pTarget;
 	Obstacle* m_pObstacle;

@@ -3,6 +3,8 @@
 #define __SPACE_SHIP__
 #include "DisplayObject.h"
 #include "TextureManager.h"
+#include "Line.h"
+
 
 class SpaceShip final : public DisplayObject
 {
@@ -20,6 +22,7 @@ public:
 
 	// getters and setters
 	void setDestination(glm::vec2 destination);
+	void setFleeDestination(glm::vec2 destination, glm::vec2 source);
 	void setMaxSpeed(float speed);
 	glm::vec2 getOrientation() const;
 	void setOrientation(glm::vec2 orientation);
@@ -29,19 +32,29 @@ public:
 	void setTurnRate(float rate);
 	float getAccelerationRate() const;
 	void setAccelerationRate(float rate);
+	int getBehaviour() const;
+	void setBehaviour(int behaviour);
+	void setWhisker(glm::vec2 start, glm::vec2 end);
+	void setFleeing(bool flee);
+	bool getFleeing() const;
+	friend class PlayScene;
 	
 private:
 
 	glm::vec2 m_destination;
+	glm::vec2 m_fleedestination;
 	glm::vec2 m_targetDirection;
 	glm::vec2 m_orientation;
 	float m_rotationAngle;
 	float m_maxSpeed;
 	float m_turnRate;
 	float m_accelerationRate;
+	int m_behaviour;
+	bool m_Fleeing;
+	//Line m_leftWhisker;
 
 	// private function
-	void m_Move();
+	void m_Seek();
 };
 
 #endif /* defined (__SPACE_SHIP__) */

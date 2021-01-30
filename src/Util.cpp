@@ -309,7 +309,18 @@ float Util::signedAngle(const glm::vec2 from, const glm::vec2 to)
 	const auto unsigned_angle = Util::angle(from, to);
 	const auto sign = Util::sign(from.x * to.y - from.y * to.x);
 	return unsigned_angle * sign;
+
 }
+
+//glm::vec2 Util::getOrientation(const float angle)
+//{
+//	const auto angle_in_randians = (angle - 90.0f) * Util::Deg2Rad;
+//
+//	const auto x = cos(angle_in_randians);
+//	const auto y = sin(angle_in_randians);
+//
+//	return glm::vec2(dx, dy);
+//}
 
 void Util::DrawLine(glm::vec2 start, glm::vec2 end, glm::vec4 colour)
 {

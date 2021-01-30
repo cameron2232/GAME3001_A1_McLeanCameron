@@ -17,11 +17,11 @@ SpaceShip::SpaceShip()
 	getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f);
 	getRigidBody()->isColliding = false;
 	setType(SPACE_SHIP);
-	setMaxSpeed(10.0f);
+	setMaxSpeed(3.0f);
 	setOrientation(glm::vec2(0.0f, -1.0f));
 	setRotation(0.0f);
-	setAccelerationRate(10.0f);
-	setTurnRate(10.0f);
+	setAccelerationRate(5.0f);
+	setTurnRate(4.0f);
 }
 
 SpaceShip::~SpaceShip()
@@ -33,25 +33,26 @@ void SpaceShip::draw()
 		getTransform()->position.x, getTransform()->position.y, m_rotationAngle, 255, true);
 
 	Util::DrawLine(getTransform()->position, (getTransform()->position + getOrientation() * 60.0f) );
+	//Util::DrawLine(m_leftWhisker.Start(), m_leftWhsisker.End);
 }
 
 void SpaceShip::update()
 {
-	m_Move();
+	/*m_leftWhisker.SetLine(setWhisker();*/ //Use thig one
+	/*setWhisker(getTransform()->position,
+		(getTransform()->position + Util::getOrientation(m_rotationAngle-30) * 100.0f));*/
+
+	switch(getBehaviour())
+	{
+	case 1:
+		m_Seek();
+		break;
+	}
+	
 }
 
 void SpaceShip::clean()
 {
-}
-
-void SpaceShip::setDestination(const glm::vec2 destination)
-{
-	m_destination = destination;
-}
-
-void SpaceShip::setMaxSpeed(const float speed)
-{
-	m_maxSpeed = speed;
 }
 
 glm::vec2 SpaceShip::getOrientation() const
@@ -64,14 +65,24 @@ float SpaceShip::getTurnRate() const
 	return m_turnRate;
 }
 
-void SpaceShip::setTurnRate(float rate)
-{
-	m_turnRate = rate;
-}
-
 float SpaceShip::getAccelerationRate() const
 {
 	return m_accelerationRate;
+}
+
+float SpaceShip::getRotation() const
+{
+	return m_rotationAngle;
+}
+
+int SpaceShip::getBehaviour() const
+{
+	return m_behaviour;
+}
+
+void SpaceShip::setTurnRate(float rate)
+{
+	m_turnRate = rate;
 }
 
 void SpaceShip::setAccelerationRate(const float rate)
@@ -82,6 +93,43 @@ void SpaceShip::setAccelerationRate(const float rate)
 void SpaceShip::setOrientation(const glm::vec2 orientation)
 {
 	m_orientation = orientation;
+}
+
+void SpaceShip::setDestination(const glm::vec2 destination) // send player to target location
+{
+	m_destination = destination;
+	//std::cout << m_destination.x << std::endl << m_destination.y;
+}
+
+void SpaceShip::setFleeDestination(glm::vec2 destination, glm::vec2 player) 
+{
+	/*m_destination.x = -1 * (destination.x);
+	m_destination.y = -1 * (destination.y);*/
+	m_destination.x = (player.x + (player.x - destination.x));
+	m_destination.y = (player.y + (player.y - destination.y));
+	//std::cout << m_destination.x << std::endl << m_destination.y;
+	
+}
+
+
+void SpaceShip::setMaxSpeed(const float speed)
+{
+	m_maxSpeed = speed;
+}
+
+void SpaceShip::setBehaviour(int behaviour)
+{
+	m_behaviour = behaviour;
+}
+
+void SpaceShip::setFleeing(bool flee)
+{
+	m_Fleeing = flee;
+}
+
+bool SpaceShip::getFleeing() const
+{
+	return m_Fleeing;
 }
 
 void SpaceShip::setRotation(const float angle)
@@ -98,18 +146,13 @@ void SpaceShip::setRotation(const float angle)
 	setOrientation(glm::vec2(x, y));
 }
 
-float SpaceShip::getRotation() const
+void SpaceShip::m_Seek()
 {
-	return m_rotationAngle;
-}
 
-void SpaceShip::m_Move()
-{
 	auto deltaTime = TheGame::Instance()->getDeltaTime();
-	
-	// direction with magnitude
+
 	m_targetDirection = m_destination - getTransform()->position;
-	
+
 	// normalized direction
 	m_targetDirection = Util::normalize(m_targetDirection);
 
@@ -117,7 +160,7 @@ void SpaceShip::m_Move()
 
 	auto turn_sensitivity = 5.0f;
 
-	if(abs(target_rotation) > turn_sensitivity)
+	if (abs(target_rotation) > turn_sensitivity)
 	{
 		if (target_rotation > 0.0f)
 		{
@@ -128,15 +171,24 @@ void SpaceShip::m_Move()
 			setRotation(getRotation() - getTurnRate());
 		}
 	}
-	
-	
+
+
 
 	getRigidBody()->acceleration = getOrientation() * getAccelerationRate();
-	
+
 	getRigidBody()->velocity += getOrientation() * (deltaTime)+
 		0.5f * getRigidBody()->acceleration * (deltaTime);
 
 	getRigidBody()->velocity = Util::clamp(getRigidBody()->velocity, m_maxSpeed);
-	
+
 	getTransform()->position += getRigidBody()->velocity;
+	
+	// direction with magnitude
+	
 }
+
+
+
+
+
+
