@@ -53,10 +53,10 @@ private:
 	float m_accelerationRate;
 	int m_behaviour;
 	bool m_Fleeing;
-	Line m_leftWhisker, m_rightWhisker;
+	Line m_leftWhisker, m_rightWhisker, m_targetWhisker;
 
 	// private function
-	void m_Seek();
+	void m_Move();
 };
 
 #endif /* defined (__SPACE_SHIP__) */

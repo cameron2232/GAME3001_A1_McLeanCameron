@@ -36,20 +36,23 @@ void SpaceShip::draw()
 	//Util::DrawLine(getTransform()->position, (getTransform()->position + getOrientation() * 60.0f) );
 	Util::DrawLine(m_leftWhisker.Start(), m_leftWhisker.End());
 	Util::DrawLine(m_rightWhisker.Start(), m_rightWhisker.End());
+	Util::DrawLine(m_targetWhisker.Start(), m_targetWhisker.End());
 }
 
 void SpaceShip::update()
 {
 	m_leftWhisker.SetLine(getTransform()->position,
-		(getTransform()->position + Util::getOrientation(m_rotationAngle-30) * 100.0f)); //Use this one
+		(getTransform()->position + Util::getOrientation(m_rotationAngle-30) * 100.0f)); 
 	m_rightWhisker.SetLine(getTransform()->position,
 		(getTransform()->position + Util::getOrientation(m_rotationAngle + 30) * 100.0f));
+	m_targetWhisker.SetLine(getTransform()->position,
+		m_destination);
 
 
 	switch(getBehaviour())
 	{
 	case 1:
-		m_Seek();
+		m_Move();
 		break;
 	case 3:
 
@@ -165,7 +168,7 @@ void SpaceShip::setRotation(const float angle)
 	setOrientation(glm::vec2(x, y));
 }
 
-void SpaceShip::m_Seek()
+void SpaceShip::m_Move()
 {
 
 	auto deltaTime = TheGame::Instance()->getDeltaTime();

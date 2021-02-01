@@ -34,7 +34,14 @@ void PlayScene::update()
 	if (CollisionManager::lineRectCheck(m_pSpaceShip->m_leftWhisker.Start(), m_pSpaceShip->m_leftWhisker.End(),
 		(m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f))
 	{
-		std::cout << "ya hit man" << std::endl;
+		//SoundManager::Instance().playSound("yay", 0);
+		std::cout << "Colliding with obstacle!" << std::endl;
+	}
+
+	if (CollisionManager::lineRectCheck(m_pSpaceShip->m_targetWhisker.Start(), m_pSpaceShip->m_targetWhisker.End(),
+		(m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f))
+	{
+		std::cout << "No line of Sight!" << std::endl;
 	}
 	
 	CollisionManager::AABBCheck(m_pSpaceShip, m_pTarget);
@@ -84,7 +91,8 @@ void PlayScene::handleEvents()
 		m_pSpaceShip->setDestination(m_pTarget->getTransform()->position);
 		m_pSpaceShip->setEnabled(true);
 		m_pSpaceShip->setFleeing(false);
-		
+
+		m_pObstacle->setEnabled(false);
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_2))
@@ -102,6 +110,7 @@ void PlayScene::handleEvents()
 		m_pSpaceShip->setEnabled(true);
 		m_pSpaceShip->setFleeing(true);
 
+		m_pObstacle->setEnabled(false);
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_3))
@@ -120,6 +129,13 @@ void PlayScene::handleEvents()
 		m_pSpaceShip->setFleeing(false);
 
 		m_pSpaceShip->setEnabled(true);
+
+		m_pObstacle->setEnabled(false);
+	}
+
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_4))
+	{
+		m_pObstacle->setEnabled(true);
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_SPACE))
