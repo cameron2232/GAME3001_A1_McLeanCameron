@@ -31,8 +31,11 @@ void PlayScene::update()
 {
 	updateDisplayList();
 
-	/*if (CollisionManager::lineLineCheck(m_pSpaceShip->m_leftWhisker.Start(), m_pSpaceShip->m_leftWhisker.End(),
-		m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f));*/
+	if (CollisionManager::lineRectCheck(m_pSpaceShip->m_leftWhisker.Start(), m_pSpaceShip->m_leftWhisker.End(),
+		(m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f))
+	{
+		std::cout << "ya hit man" << std::endl;
+	}
 	
 	CollisionManager::AABBCheck(m_pSpaceShip, m_pTarget);
 

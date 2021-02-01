@@ -22,6 +22,7 @@ SpaceShip::SpaceShip()
 	setRotation(0.0f);
 	setAccelerationRate(5.0f);
 	setTurnRate(4.0f);
+	
 }
 
 SpaceShip::~SpaceShip()
@@ -32,15 +33,18 @@ void SpaceShip::draw()
 	TextureManager::Instance()->draw("spaceship", 
 		getTransform()->position.x, getTransform()->position.y, m_rotationAngle, 255, true);
 
-	Util::DrawLine(getTransform()->position, (getTransform()->position + getOrientation() * 60.0f) );
-	//Util::DrawLine(m_leftWhisker.Start(), m_leftWhsisker.End);
+	//Util::DrawLine(getTransform()->position, (getTransform()->position + getOrientation() * 60.0f) );
+	Util::DrawLine(m_leftWhisker.Start(), m_leftWhisker.End());
+	Util::DrawLine(m_rightWhisker.Start(), m_rightWhisker.End());
 }
 
 void SpaceShip::update()
 {
-	/*m_leftWhisker.SetLine(setWhisker();*/ //Use this one
-	/*setWhisker(getTransform()->position,
-		(getTransform()->position + Util::getOrientation(m_rotationAngle-30) * 100.0f));*/
+	m_leftWhisker.SetLine(getTransform()->position,
+		(getTransform()->position + Util::getOrientation(m_rotationAngle-30) * 100.0f)); //Use this one
+	m_rightWhisker.SetLine(getTransform()->position,
+		(getTransform()->position + Util::getOrientation(m_rotationAngle + 30) * 100.0f));
+
 
 	switch(getBehaviour())
 	{
@@ -140,6 +144,11 @@ void SpaceShip::setFleeing(bool flee)
 bool SpaceShip::getFleeing() const
 {
 	return m_Fleeing;
+}
+
+void SpaceShip::setWhisker(glm::vec2 start, glm::vec2 end)
+{
+	m_leftWhisker.SetLine(start, end);
 }
 
 void SpaceShip::setRotation(const float angle)

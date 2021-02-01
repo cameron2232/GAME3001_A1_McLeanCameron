@@ -53,7 +53,7 @@ private:
 	float m_accelerationRate;
 	int m_behaviour;
 	bool m_Fleeing;
-	//Line m_leftWhisker;
+	Line m_leftWhisker, m_rightWhisker;
 
 	// private function
 	void m_Seek();
