@@ -31,6 +31,9 @@ void PlayScene::update()
 {
 	updateDisplayList();
 
+
+	m_pSpaceShip->setTargetLoc(m_pTarget->getTransform()->position);
+
 	if (CollisionManager::lineRectCheck(m_pSpaceShip->m_leftWhisker.Start(), m_pSpaceShip->m_leftWhisker.End(),
 		(m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f))
 	{
@@ -38,11 +41,26 @@ void PlayScene::update()
 		std::cout << "Colliding with obstacle!" << std::endl;
 	}
 
-	if (CollisionManager::lineRectCheck(m_pSpaceShip->m_targetWhisker.Start(), m_pSpaceShip->m_targetWhisker.End(),
-		(m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f))
+
+	if (m_pSpaceShip->getAvoiding())
 	{
-		std::cout << "No line of Sight!" << std::endl;
+		if (CollisionManager::lineRectCheck(m_pSpaceShip->m_targetWhisker.Start(), m_pSpaceShip->m_targetWhisker.End(),
+			(m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f))
+		{
+
+			std::cout << "No line of Sight!" << std::endl;
+			m_pSpaceShip->m_destination = { 100.0f, 100.0f };
+			//avoid obstacle
+		}
+
+		if (!(CollisionManager::lineRectCheck(m_pSpaceShip->m_targetWhisker.Start(), m_pSpaceShip->m_targetWhisker.End(),
+			(m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f)))
+		{
+			m_pSpaceShip->m_destination = m_pTarget->getTransform()->position;
+			std::cout << "Yes line of sight!" << std::endl;
+		}
 	}
+
 	
 	CollisionManager::AABBCheck(m_pSpaceShip, m_pTarget);
 
@@ -79,63 +97,91 @@ void PlayScene::handleEvents()
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_1))
 	{
-		//TheGame::Instance()->changeSceneState(START_SCENE);
+		//disabling other functions.
+		m_pTarget->setArriving(false);
+		//Initiating Target at random location.
 		m_pTarget->setTargetLoc();
 		m_pTarget->getTransform()->position = m_pTarget->getTargetLoc();
 		m_pTarget->setEnabled(true);
-		m_pTarget->setArriving(false);
-		
+
+		//Initiating Marvin.
 		m_pSpaceShip->setRotation(0.0f);
-		m_pSpaceShip->setBehaviour(1);
 		m_pSpaceShip->getTransform()->position = glm::vec2(10.0f, 10.0f);
 		m_pSpaceShip->setDestination(m_pTarget->getTransform()->position);
-		m_pSpaceShip->setEnabled(true);
+		//disabling other functions.
 		m_pSpaceShip->setFleeing(false);
+		m_pSpaceShip->setAvoiding(false);
 
-		m_pObstacle->setEnabled(false);
+		m_pSpaceShip->setEnabled(true);
+
+		//m_pObstacle->setEnabled(false);
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_2))
 	{
-		//TheGame::Instance()->changeSceneState(START_SCENE);
+		//disabling other functions.
+		m_pTarget->setArriving(false);
+		//Initiating Target at random location.
 		m_pTarget->setTargetLoc();
 		m_pTarget->getTransform()->position = m_pTarget->getTargetLoc();
-		m_pTarget->setArriving(false);
 		m_pTarget->setEnabled(true);
 
+		//Initiating Marvin.
 		m_pSpaceShip->setRotation(-45.0f);
-		m_pSpaceShip->setBehaviour(1);
 		m_pSpaceShip->getTransform()->position = glm::vec2(400.0f, 300.0f);
 		m_pSpaceShip->setFleeDestination(m_pTarget->getTransform()->position, m_pSpaceShip->getTransform()->position);
-		m_pSpaceShip->setEnabled(true);
+		//enabling flee function.
 		m_pSpaceShip->setFleeing(true);
+		//disabling other functions.
+		m_pSpaceShip->setAvoiding(false);
 
-		m_pObstacle->setEnabled(false);
+		m_pSpaceShip->setEnabled(true);
+
+		//m_pObstacle->setEnabled(false);
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_3))
 	{
-		//Arrival
-		m_pTarget->getTransform()->position = glm::vec2{ 600.0f, 500.0f };
+		//Enabling Movement function.
 		m_pTarget->setArriving(true);
+		//Initiating Target.
+		m_pTarget->getTransform()->position = glm::vec2{ 600.0f, 500.0f };
 		m_pTarget->setDestination(glm::vec2{ 100.0f, 300.0f });
-		
 		m_pTarget->setEnabled(true);
-
+		
+		//Initiating Marvin.
 		m_pSpaceShip->setRotation(0.0f);
-		m_pSpaceShip->setBehaviour(1);
 		m_pSpaceShip->getTransform()->position = glm::vec2(600.0f, 300.0f);
 		m_pSpaceShip->setArriveDestination(m_pTarget->getTransform()->position, m_pSpaceShip->getTransform()->position, m_pTarget->m_destination);
+		//disabling other functions.
 		m_pSpaceShip->setFleeing(false);
+		m_pSpaceShip->setAvoiding(false);
 
 		m_pSpaceShip->setEnabled(true);
 
-		m_pObstacle->setEnabled(false);
+		//m_pObstacle->setEnabled(false);
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_4))
 	{
+		//disabling other functions.
+		m_pTarget->setArriving(false);
+		//Initiating Target at set location.
+		m_pTarget->getTransform()->position = {700.0f, 350.0f};
+		m_pTarget->setEnabled(true);
+		
 		m_pObstacle->setEnabled(true);
+		
+		//disabling other functions.
+		m_pSpaceShip->setFleeing(false);
+		//Initiating Marvin.
+		m_pSpaceShip->getTransform()->position = glm::vec2(10.0f, 10.0f);
+		m_pSpaceShip->setDestination(m_pTarget->getTransform()->position);
+		//Enabling Avoid Function.
+		m_pSpaceShip->setAvoiding(true);
+		
+		m_pSpaceShip->setEnabled(true);
+		
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_SPACE))
@@ -147,6 +193,7 @@ void PlayScene::handleEvents()
 		m_pSpaceShip->getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
 		m_pSpaceShip->setRotation(0.0f); //set angle to 0 degrees
 		m_pSpaceShip->setFleeing(false);
+		m_pSpaceShip->setAvoiding(false);
 	}
 
 	
@@ -164,15 +211,13 @@ void PlayScene::start()
 
 	m_pObstacle = new Obstacle();
 	m_pObstacle->getTransform()->position = glm::vec2(500.0f, 300.0f);
-	m_pObstacle->setEnabled(false);
+	//m_pObstacle->setEnabled(false);
 	addChild(m_pObstacle);
 
 	// instantiating spaceship
 	m_pSpaceShip = new SpaceShip();
 	m_pSpaceShip->setEnabled(false);
-	m_pSpaceShip->setBehaviour(1);
-	/*m_pSpaceShip->m_leftWhisker.SetLine(getTransform()->position,
-		(getTransform()->position + Util::getOrientation(m_rotationAngle - 30) * 100.0f));*/
+
 	addChild(m_pSpaceShip);
 }
 
@@ -237,6 +282,14 @@ void PlayScene::GUI_Function() const
 	{
 		m_pTarget->getTransform()->position = glm::vec2(targetPosition[0], targetPosition[1]);
 		m_pSpaceShip->setDestination(m_pTarget->getTransform()->position);
+	}
+
+	ImGui::Separator();
+
+	static float obstaclePosition[2] = { m_pObstacle->getTransform()->position.x, m_pObstacle->getTransform()->position.y };
+	if (ImGui::SliderFloat2("Obstacle", obstaclePosition, 0.0f, 800.0f))
+	{
+		m_pObstacle->getTransform()->position = glm::vec2(obstaclePosition[0], obstaclePosition[1]);
 	}
 
 	ImGui::End();

@@ -35,9 +35,8 @@ private:
 	glm::vec2 m_destination;
 	glm::vec2 m_targetDirection;
 
-
+	bool m_arriving;
 	float m_maxSpeed;
-	bool m_Arriving;
 	void m_MoveToArrive();
 };
 

@@ -44,7 +44,9 @@ void Target::draw()
 void Target::update()
 {
 
-	if(m_Arriving == true)
+	
+	
+	if(m_arriving == true)
 	{
 		m_MoveToArrive();
 	}
@@ -85,12 +87,12 @@ void Target::setMaxSpeed(float speed)
 
 void Target::setArriving(bool arrive)
 {
-	m_Arriving = arrive;
+	m_arriving = arrive;
 }
 
 bool Target::getArriving() const
 {
-	return m_Arriving;
+	return m_arriving;
 }
 
 glm::vec2 Target::getTargetDirection() const

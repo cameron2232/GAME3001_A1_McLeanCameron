@@ -33,7 +33,7 @@ void SpaceShip::draw()
 	TextureManager::Instance()->draw("spaceship", 
 		getTransform()->position.x, getTransform()->position.y, m_rotationAngle, 255, true);
 
-	//Util::DrawLine(getTransform()->position, (getTransform()->position + getOrientation() * 60.0f) );
+	//Util::DrawLine(getTransform()->position, m_destination);
 	Util::DrawLine(m_leftWhisker.Start(), m_leftWhisker.End());
 	Util::DrawLine(m_rightWhisker.Start(), m_rightWhisker.End());
 	Util::DrawLine(m_targetWhisker.Start(), m_targetWhisker.End());
@@ -46,19 +46,10 @@ void SpaceShip::update()
 	m_rightWhisker.SetLine(getTransform()->position,
 		(getTransform()->position + Util::getOrientation(m_rotationAngle + 30) * 100.0f));
 	m_targetWhisker.SetLine(getTransform()->position,
-		m_destination);
+		getTargetLoc());
 
+	m_Move();
 
-	switch(getBehaviour())
-	{
-	case 1:
-		m_Move();
-		break;
-	case 3:
-
-		break;
-	}
-	
 }
 
 void SpaceShip::clean()
@@ -85,9 +76,9 @@ float SpaceShip::getRotation() const
 	return m_rotationAngle;
 }
 
-int SpaceShip::getBehaviour() const
+bool SpaceShip::getAvoiding() const
 {
-	return m_behaviour;
+	return m_avoiding;
 }
 
 void SpaceShip::setTurnRate(float rate)
@@ -98,6 +89,11 @@ void SpaceShip::setTurnRate(float rate)
 void SpaceShip::setAccelerationRate(const float rate)
 {
 	m_accelerationRate = rate;
+}
+
+void SpaceShip::setAvoiding(bool avoid)
+{
+	m_avoiding = avoid;
 }
 
 void SpaceShip::setOrientation(const glm::vec2 orientation)
@@ -134,24 +130,32 @@ void SpaceShip::setMaxSpeed(const float speed)
 	m_maxSpeed = speed;
 }
 
-void SpaceShip::setBehaviour(int behaviour)
-{
-	m_behaviour = behaviour;
-}
+
 
 void SpaceShip::setFleeing(bool flee)
 {
-	m_Fleeing = flee;
+	m_fleeing = flee;
 }
 
 bool SpaceShip::getFleeing() const
 {
-	return m_Fleeing;
+	return m_fleeing;
 }
+
+glm::vec2 SpaceShip::getTargetLoc() const
+{
+	return m_targetLoc;
+}
+
+void SpaceShip::setTargetLoc(glm::vec2 target)
+{
+	m_targetLoc = target;
+}
+
 
 void SpaceShip::setWhisker(glm::vec2 start, glm::vec2 end)
 {
-	m_leftWhisker.SetLine(start, end);
+	m_targetWhisker.SetLine(start, end);
 }
 
 void SpaceShip::setRotation(const float angle)
