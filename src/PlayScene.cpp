@@ -34,7 +34,18 @@ void PlayScene::update()
 	/*if (CollisionManager::lineLineCheck(m_pSpaceShip->m_leftWhisker.Start(), m_pSpaceShip->m_leftWhisker.End(),
 		m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f));*/
 	
-	CollisionManager::AABBCheck(m_pSpaceShip, m_pObstacle);
+	CollisionManager::AABBCheck(m_pSpaceShip, m_pTarget);
+
+	if (m_pSpaceShip->getFleeing())
+	{
+		std::cout << "Updating current location..." << std::endl;
+		m_pSpaceShip->setFleeDestination(m_pTarget->getTransform()->position, m_pSpaceShip->getTransform()->position);
+	}
+
+	if(m_pTarget->getArriving())
+	{
+		m_pSpaceShip->setArriveDestination(m_pTarget->getTransform()->position, m_pSpaceShip->getTransform()->position, m_pTarget->m_destination);
+	}
 	
 }
 
@@ -45,18 +56,24 @@ void PlayScene::clean()
 
 void PlayScene::handleEvents()
 {
+
 	EventManager::Instance().update();
+
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_ESCAPE))
 	{
 		TheGame::Instance()->quit();
 	}
 
+	
+
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_1))
 	{
 		//TheGame::Instance()->changeSceneState(START_SCENE);
-		m_pTarget->getTransform()->position = glm::vec2(400.0f, 300.0f);
+		m_pTarget->setTargetLoc();
+		m_pTarget->getTransform()->position = m_pTarget->getTargetLoc();
 		m_pTarget->setEnabled(true);
+		m_pTarget->setArriving(false);
 		
 		m_pSpaceShip->setRotation(0.0f);
 		m_pSpaceShip->setBehaviour(1);
@@ -70,38 +87,50 @@ void PlayScene::handleEvents()
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_2))
 	{
 		//TheGame::Instance()->changeSceneState(START_SCENE);
-		m_pTarget->getTransform()->position = glm::vec2(100.0f, 250.0f);
+		m_pTarget->setTargetLoc();
+		m_pTarget->getTransform()->position = m_pTarget->getTargetLoc();
+		m_pTarget->setArriving(false);
 		m_pTarget->setEnabled(true);
 
 		m_pSpaceShip->setRotation(-45.0f);
 		m_pSpaceShip->setBehaviour(1);
-		m_pSpaceShip->getTransform()->position = glm::vec2(200.0f, 280.0f);
+		m_pSpaceShip->getTransform()->position = glm::vec2(400.0f, 300.0f);
 		m_pSpaceShip->setFleeDestination(m_pTarget->getTransform()->position, m_pSpaceShip->getTransform()->position);
 		m_pSpaceShip->setEnabled(true);
 		m_pSpaceShip->setFleeing(true);
 
 	}
 
-	//if (EventManager::Instance().isKeyDown(SDL_SCANCODE_2))
-	//{
-	//	TheGame::Instance()->changeSceneState(END_SCENE);
-	//}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_3))
+	{
+		//Arrival
+		m_pTarget->getTransform()->position = glm::vec2{ 600.0f, 500.0f };
+		m_pTarget->setArriving(true);
+		m_pTarget->setDestination(glm::vec2{ 100.0f, 300.0f });
+		
+		m_pTarget->setEnabled(true);
+
+		m_pSpaceShip->setRotation(0.0f);
+		m_pSpaceShip->setBehaviour(1);
+		m_pSpaceShip->getTransform()->position = glm::vec2(600.0f, 300.0f);
+		m_pSpaceShip->setArriveDestination(m_pTarget->getTransform()->position, m_pSpaceShip->getTransform()->position, m_pTarget->m_destination);
+		m_pSpaceShip->setFleeing(false);
+
+		m_pSpaceShip->setEnabled(true);
+	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_SPACE))
 	{
 		m_pTarget->setEnabled(false);
-		
+		m_pTarget->setArriving(false);
 		
 		m_pSpaceShip->setEnabled(false);
 		m_pSpaceShip->getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
 		m_pSpaceShip->setRotation(0.0f); //set angle to 0 degrees
+		m_pSpaceShip->setFleeing(false);
 	}
 
-	if(m_pSpaceShip->getFleeing())
-	{
-		std::cout << "Updating current location..." << std::endl;
-		m_pSpaceShip->setFleeDestination(m_pTarget->getTransform()->position, m_pSpaceShip->getTransform()->position);
-	}
+	
 }
 
 void PlayScene::start()

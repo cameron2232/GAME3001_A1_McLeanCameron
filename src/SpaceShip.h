@@ -22,7 +22,9 @@ public:
 
 	// getters and setters
 	void setDestination(glm::vec2 destination);
-	void setFleeDestination(glm::vec2 destination, glm::vec2 source);
+	void setFleeDestination(glm::vec2 destination, glm::vec2 player);
+	void setArriveDestination(glm::vec2 destination, glm::vec2 player, glm::vec2 arrive);
+	
 	void setMaxSpeed(float speed);
 	glm::vec2 getOrientation() const;
 	void setOrientation(glm::vec2 orientation);

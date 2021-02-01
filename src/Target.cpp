@@ -4,6 +4,7 @@
 #include "SoundManager.h"
 
 #include "TextureManager.h"
+#include "Util.h"
 
 
 Target::Target()
@@ -18,6 +19,9 @@ Target::Target()
 	getRigidBody()->isColliding = false;
 
 	setType(TARGET);
+	setMaxSpeed(2.0f);
+
+
 
 	SoundManager::Instance().load("../Assets/audio/yay.ogg", "yay", SOUND_SFX);
 }
@@ -35,9 +39,16 @@ void Target::draw()
 	TextureManager::Instance()->draw("circle", x, y, 0, 255, true);
 }
 
+
+
 void Target::update()
 {
-	m_move();
+
+	if(m_Arriving == true)
+	{
+		m_MoveToArrive();
+	}
+	//m_move();
 	m_checkBounds();
 }
 
@@ -45,10 +56,53 @@ void Target::clean()
 {
 }
 
-void Target::m_move()
+void Target::setTargetLoc()
 {
-	getTransform()->position = getTransform()->position + getRigidBody()->velocity * 5.0f;
+	m_targetLoc.x = 500.0f * (static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
+	m_targetLoc.y = 600.0f * (static_cast<float>(rand()) / static_cast<float>(RAND_MAX));
 }
+
+glm::vec2 Target::getTargetLoc() const
+{
+	return m_targetLoc;
+}
+
+void Target::setDestination(glm::vec2 destination)
+{
+	m_destination = destination;
+}
+
+glm::vec2 Target::getDestination() const
+{
+	return m_destination;
+}
+
+
+void Target::setMaxSpeed(float speed)
+{
+	m_maxSpeed = speed;
+}
+
+void Target::setArriving(bool arrive)
+{
+	m_Arriving = arrive;
+}
+
+bool Target::getArriving() const
+{
+	return m_Arriving;
+}
+
+glm::vec2 Target::getTargetDirection() const
+{
+	return m_targetDirection;
+}
+
+
+//void Target::m_move()
+//{
+//	getTransform()->position = getTransform()->position + getRigidBody()->velocity * 5.0f;
+//}
 
 void Target::m_checkBounds()
 {
@@ -56,4 +110,15 @@ void Target::m_checkBounds()
 
 void Target::m_reset()
 {
+}
+
+void Target::m_MoveToArrive()
+{
+	m_targetDirection = m_destination - getTransform()->position;
+	
+	m_targetDirection = Util::normalize(m_targetDirection);
+
+	getRigidBody()->velocity = m_targetDirection * m_maxSpeed;
+
+	getTransform()->position += getRigidBody()->velocity;
 }

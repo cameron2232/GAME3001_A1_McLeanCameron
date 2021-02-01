@@ -38,7 +38,7 @@ void SpaceShip::draw()
 
 void SpaceShip::update()
 {
-	/*m_leftWhisker.SetLine(setWhisker();*/ //Use thig one
+	/*m_leftWhisker.SetLine(setWhisker();*/ //Use this one
 	/*setWhisker(getTransform()->position,
 		(getTransform()->position + Util::getOrientation(m_rotationAngle-30) * 100.0f));*/
 
@@ -46,6 +46,9 @@ void SpaceShip::update()
 	{
 	case 1:
 		m_Seek();
+		break;
+	case 3:
+
 		break;
 	}
 	
@@ -108,6 +111,13 @@ void SpaceShip::setFleeDestination(glm::vec2 destination, glm::vec2 player)
 	m_destination.x = (player.x + (player.x - destination.x));
 	m_destination.y = (player.y + (player.y - destination.y));
 	//std::cout << m_destination.x << std::endl << m_destination.y;
+	
+}
+
+void SpaceShip::setArriveDestination(glm::vec2 target, glm::vec2 player, glm::vec2 arrive)
+{
+	m_destination.x = arrive.x + (target.x - player.x);
+	m_destination.y = arrive.y + (target.y - player.y);
 	
 }
 
