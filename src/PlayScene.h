@@ -8,6 +8,7 @@
 #include "Obstacle.h"
 #include "SpaceShip.h"
 #include "Target.h"
+#include "TextureManager.h"
 
 class PlayScene : public Scene
 {
@@ -23,12 +24,15 @@ public:
 	virtual void start() override;
 
 	
+	
 private:
 	// IMGUI Function
 	void GUI_Function() const;
 	std::string m_guiTitle;
 	
 	glm::vec2 m_mousePosition;
+
+	
 
 	bool isFleeing;
 

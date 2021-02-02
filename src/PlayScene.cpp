@@ -10,6 +10,17 @@
 
 PlayScene::PlayScene()
 {
+	TextureManager::Instance()->load("../Assets/textures/Labels.png", "label");
+	auto size = TextureManager::Instance()->getTextureSize("label");
+	setWidth(size.x);
+	setHeight(size.y);
+
+	getTransform()->position = glm::vec2(400.0f, 100.0f);
+	setType(LABEL);
+	
+
+
+	
 	PlayScene::start();
 }
 
@@ -18,6 +29,9 @@ PlayScene::~PlayScene()
 
 void PlayScene::draw()
 {
+	TextureManager::Instance()->draw("label",
+		getTransform()->position.x, getTransform()->position.y, 0, 255, true);
+	
 	if(EventManager::Instance().isIMGUIActive())
 	{
 		GUI_Function();
@@ -30,8 +44,10 @@ void PlayScene::draw()
 void PlayScene::update()
 {
 	updateDisplayList();
-
-
+	
+	//node1 = top left, node2 = top right, node3 = bottom left, node4 = bottom right
+	m_pObstacle->setNode(m_pObstacle->getTransform()->position);
+	
 	m_pSpaceShip->setTargetLoc(m_pTarget->getTransform()->position);
 
 	if (CollisionManager::lineRectCheck(m_pSpaceShip->m_leftWhisker.Start(), m_pSpaceShip->m_leftWhisker.End(),
@@ -44,29 +60,41 @@ void PlayScene::update()
 
 	if (m_pSpaceShip->getAvoiding())
 	{
+		if (CollisionManager::lineRectCheck(m_pSpaceShip->m_rightWhisker.Start(), m_pSpaceShip->m_rightWhisker.End(),
+			(m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f))
+		{
+			
+		}
+		
+		m_pObstacle->setTargetNode(m_pTarget->getTransform()->position, m_pObstacle->getTransform()->position, m_pSpaceShip->getTransform()->position);
 		if (CollisionManager::lineRectCheck(m_pSpaceShip->m_targetWhisker.Start(), m_pSpaceShip->m_targetWhisker.End(),
 			(m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f))
 		{
-
-			std::cout << "No line of Sight!" << std::endl;
-			m_pSpaceShip->m_destination = { 100.0f, 100.0f };
 			//avoid obstacle
+			m_pSpaceShip->setDestination(m_pObstacle->getTargetNode());
 		}
 
-		if (!(CollisionManager::lineRectCheck(m_pSpaceShip->m_targetWhisker.Start(), m_pSpaceShip->m_targetWhisker.End(),
-			(m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f)))
+		else
 		{
 			m_pSpaceShip->m_destination = m_pTarget->getTransform()->position;
-			std::cout << "Yes line of sight!" << std::endl;
 		}
 	}
 
+	//if((m_pTarget->getTransform()->position.x - m_pSpaceShip->getTransform()->position.x) < 25.0f && (m_pTarget->getTransform()->position.y - m_pSpaceShip->getTransform()->position.y) < 25.0f)
+	//{
+	//	std::cout << "You're almost there!" << std::endl;
+	//	m_pSpaceShip->getRigidBody()->velocity = Util::clamp(getRigidBody()->velocity, 5.0f);
+	//	
+	//}
 	
-	CollisionManager::AABBCheck(m_pSpaceShip, m_pTarget);
+	
+	if(CollisionManager::AABBCheck(m_pSpaceShip, m_pTarget))
+	{
+		m_pSpaceShip->setMaxSpeed(0.0f);
+	}
 
 	if (m_pSpaceShip->getFleeing())
 	{
-		std::cout << "Updating current location..." << std::endl;
 		m_pSpaceShip->setFleeDestination(m_pTarget->getTransform()->position, m_pSpaceShip->getTransform()->position);
 	}
 
@@ -111,10 +139,9 @@ void PlayScene::handleEvents()
 		//disabling other functions.
 		m_pSpaceShip->setFleeing(false);
 		m_pSpaceShip->setAvoiding(false);
-
 		m_pSpaceShip->setEnabled(true);
 
-		//m_pObstacle->setEnabled(false);
+		m_pObstacle->setEnabled(false);
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_2))
@@ -134,10 +161,9 @@ void PlayScene::handleEvents()
 		m_pSpaceShip->setFleeing(true);
 		//disabling other functions.
 		m_pSpaceShip->setAvoiding(false);
-
 		m_pSpaceShip->setEnabled(true);
 
-		//m_pObstacle->setEnabled(false);
+		m_pObstacle->setEnabled(false);
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_3))
@@ -156,10 +182,9 @@ void PlayScene::handleEvents()
 		//disabling other functions.
 		m_pSpaceShip->setFleeing(false);
 		m_pSpaceShip->setAvoiding(false);
-
 		m_pSpaceShip->setEnabled(true);
 
-		//m_pObstacle->setEnabled(false);
+		m_pObstacle->setEnabled(false);
 	}
 
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_4))
@@ -168,6 +193,7 @@ void PlayScene::handleEvents()
 		m_pTarget->setArriving(false);
 		//Initiating Target at set location.
 		m_pTarget->getTransform()->position = {700.0f, 350.0f};
+		
 		m_pTarget->setEnabled(true);
 		
 		m_pObstacle->setEnabled(true);
@@ -175,11 +201,11 @@ void PlayScene::handleEvents()
 		//disabling other functions.
 		m_pSpaceShip->setFleeing(false);
 		//Initiating Marvin.
-		m_pSpaceShip->getTransform()->position = glm::vec2(10.0f, 10.0f);
+		m_pSpaceShip->getTransform()->position = glm::vec2(10.0f, 200.0f);
 		m_pSpaceShip->setDestination(m_pTarget->getTransform()->position);
+		m_pSpaceShip->setRotation(90.0f);
 		//Enabling Avoid Function.
 		m_pSpaceShip->setAvoiding(true);
-		
 		m_pSpaceShip->setEnabled(true);
 		
 	}
@@ -194,6 +220,7 @@ void PlayScene::handleEvents()
 		m_pSpaceShip->setRotation(0.0f); //set angle to 0 degrees
 		m_pSpaceShip->setFleeing(false);
 		m_pSpaceShip->setAvoiding(false);
+		m_pObstacle->setEnabled(false);
 	}
 
 	
@@ -211,6 +238,7 @@ void PlayScene::start()
 
 	m_pObstacle = new Obstacle();
 	m_pObstacle->getTransform()->position = glm::vec2(500.0f, 300.0f);
+	m_pObstacle->setEnabled(false);
 	//m_pObstacle->setEnabled(false);
 	addChild(m_pObstacle);
 
@@ -254,9 +282,75 @@ void PlayScene::GUI_Function() const
 	{
 		m_pSpaceShip->setTurnRate(turn_rate);
 	}
-	
-	if(ImGui::Button("Start"))
+
+	if(ImGui::Button("Seek"))
 	{
+		m_pTarget->setArriving(false);
+		//Initiating Target at random location.
+		m_pTarget->setTargetLoc();
+		m_pTarget->getTransform()->position = m_pTarget->getTargetLoc();
+		m_pTarget->setEnabled(true);
+
+		//Initiating Marvin.
+		m_pSpaceShip->setRotation(0.0f);
+		m_pSpaceShip->getTransform()->position = glm::vec2(10.0f, 10.0f);
+		m_pSpaceShip->setDestination(m_pTarget->getTransform()->position);
+		//disabling other functions.
+		m_pSpaceShip->setFleeing(false);
+		m_pSpaceShip->setAvoiding(false);
+
+		m_pSpaceShip->setEnabled(true);
+
+		m_pObstacle->setEnabled(false);
+	}
+	
+	ImGui::SameLine();
+	
+	if(ImGui::Button("Flee"))
+	{
+		m_pTarget->setArriving(false);
+		m_pTarget->setTargetLoc();
+		m_pTarget->getTransform()->position = m_pTarget->getTargetLoc();
+		m_pTarget->setEnabled(true);
+		m_pSpaceShip->setRotation(-45.0f);
+		m_pSpaceShip->getTransform()->position = glm::vec2(400.0f, 300.0f);
+		m_pSpaceShip->setFleeDestination(m_pTarget->getTransform()->position, m_pSpaceShip->getTransform()->position);
+		m_pSpaceShip->setFleeing(true);
+		m_pSpaceShip->setAvoiding(false);
+		m_pSpaceShip->setEnabled(true);
+		m_pObstacle->setEnabled(false);
+	}
+
+	ImGui::SameLine();
+
+	if(ImGui::Button("Arrive"))
+	{
+		m_pTarget->setArriving(true);
+		m_pTarget->getTransform()->position = glm::vec2{ 600.0f, 500.0f };
+		m_pTarget->setDestination(glm::vec2{ 100.0f, 300.0f });
+		m_pTarget->setEnabled(true);
+		m_pSpaceShip->setRotation(0.0f);
+		m_pSpaceShip->getTransform()->position = glm::vec2(600.0f, 300.0f);
+		m_pSpaceShip->setArriveDestination(m_pTarget->getTransform()->position, m_pSpaceShip->getTransform()->position, m_pTarget->m_destination);
+		m_pSpaceShip->setFleeing(false);
+		m_pSpaceShip->setAvoiding(false);
+		m_pSpaceShip->setEnabled(true);
+		m_pObstacle->setEnabled(false);
+	}
+
+	ImGui::SameLine();
+
+	if(ImGui::Button("Avoid"))
+	{
+		m_pTarget->setArriving(false);
+		m_pTarget->getTransform()->position = { 700.0f, 350.0f };
+		m_pTarget->setEnabled(true);
+		m_pObstacle->setEnabled(true);
+		m_pSpaceShip->setFleeing(false);
+		m_pSpaceShip->getTransform()->position = glm::vec2(10.0f, 200.0f);
+		m_pSpaceShip->setDestination(m_pTarget->getTransform()->position);
+		m_pSpaceShip->setRotation(90.0f);
+		m_pSpaceShip->setAvoiding(true);
 		m_pSpaceShip->setEnabled(true);
 	}
 
@@ -264,11 +358,14 @@ void PlayScene::GUI_Function() const
 	
 	if (ImGui::Button("Reset"))
 	{
-
-		m_pSpaceShip->getTransform()->position = glm::vec2(100.0f, 100.0f);
+		m_pTarget->setEnabled(false);
+		m_pTarget->setArriving(false);
 		m_pSpaceShip->setEnabled(false);
 		m_pSpaceShip->getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
 		m_pSpaceShip->setRotation(0.0f); //set angle to 0 degrees
+		m_pSpaceShip->setFleeing(false);
+		m_pSpaceShip->setAvoiding(false);
+		m_pObstacle->setEnabled(false);
 		turn_rate = 5.0f;
 		acceleration_rate = 2.0f;
 		speed = 10.0f;

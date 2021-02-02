@@ -48,13 +48,18 @@ void SpaceShip::update()
 	m_targetWhisker.SetLine(getTransform()->position,
 		getTargetLoc());
 
+
 	m_Move();
+		
+
+	//m_Move();
 
 }
 
 void SpaceShip::clean()
 {
 }
+
 
 glm::vec2 SpaceShip::getOrientation() const
 {

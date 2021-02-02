@@ -36,7 +36,7 @@ void Target::draw()
 	const auto y = getTransform()->position.y;
 
 	// draw the target
-	TextureManager::Instance()->draw("circle", x, y, 0, 255, true);
+	TextureManager::Instance()->draw("circle", x, y, 0, 255, false);
 }
 
 
