@@ -44,6 +44,9 @@ public:
 	void setWhisker(glm::vec2 start, glm::vec2 end);
 	void setFleeing(bool flee);
 	bool getFleeing() const;
+
+	void setDistance(glm::vec2 player, glm::vec2 target);
+	int getDistance() const;
 	friend class PlayScene;
 	
 private:
@@ -57,6 +60,7 @@ private:
 	float m_maxSpeed;
 	float m_turnRate;
 	float m_accelerationRate;
+	int m_distance;
 	bool m_fleeing;
 	bool m_avoiding;
 	Line m_leftWhisker, m_rightWhisker, m_targetWhisker;

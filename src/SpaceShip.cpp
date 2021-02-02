@@ -22,6 +22,9 @@ SpaceShip::SpaceShip()
 	setRotation(0.0f);
 	setAccelerationRate(5.0f);
 	setTurnRate(4.0f);
+
+	SoundManager::Instance().load("../Assets/audio/tetrisclear.ogg", "tetrisclear", SOUND_SFX);
+	SoundManager::Instance().setSoundVolume(75);
 	
 }
 
@@ -145,6 +148,17 @@ void SpaceShip::setFleeing(bool flee)
 bool SpaceShip::getFleeing() const
 {
 	return m_fleeing;
+}
+
+void SpaceShip::setDistance(glm::vec2 player, glm::vec2 target)
+{
+	m_distance = sqrt(((target.x - player.x) * (target.x - player.x)) + ((target.y - player.y) * (target.y - player.y)));
+	std::cout << m_distance << std::endl;
+}
+
+int SpaceShip::getDistance() const
+{
+	return m_distance;
 }
 
 glm::vec2 SpaceShip::getTargetLoc() const

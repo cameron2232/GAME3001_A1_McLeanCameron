@@ -10,17 +10,7 @@
 
 PlayScene::PlayScene()
 {
-	TextureManager::Instance()->load("../Assets/textures/Labels.png", "label");
-	auto size = TextureManager::Instance()->getTextureSize("label");
-	setWidth(size.x);
-	setHeight(size.y);
 
-	getTransform()->position = glm::vec2(400.0f, 100.0f);
-	setType(LABEL);
-	
-
-
-	
 	PlayScene::start();
 }
 
@@ -54,8 +44,9 @@ void PlayScene::update()
 		(m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f))
 	{
 		//SoundManager::Instance().playSound("yay", 0);
-		std::cout << "Colliding with obstacle!" << std::endl;
+		//std::cout << "Colliding with obstacle!" << std::endl;
 	}
+	
 
 
 	if (m_pSpaceShip->getAvoiding())
@@ -80,18 +71,23 @@ void PlayScene::update()
 		}
 	}
 
-	//if((m_pTarget->getTransform()->position.x - m_pSpaceShip->getTransform()->position.x) < 25.0f && (m_pTarget->getTransform()->position.y - m_pSpaceShip->getTransform()->position.y) < 25.0f)
-	//{
-	//	std::cout << "You're almost there!" << std::endl;
-	//	m_pSpaceShip->getRigidBody()->velocity = Util::clamp(getRigidBody()->velocity, 5.0f);
-	//	
-	//}
-	
-	
-	if(CollisionManager::AABBCheck(m_pSpaceShip, m_pTarget))
+	if(m_pSpaceShip->getDistance() <= 150 && m_pSpaceShip->getDistance() > 15)
 	{
-		m_pSpaceShip->setMaxSpeed(0.0f);
+		m_pSpaceShip->setMaxSpeed(1.5f);
 	}
+
+	if(m_pSpaceShip->getDistance() <= 15)
+	{
+		m_pSpaceShip->setMaxSpeed(0.0f); 
+		
+		SoundManager::Instance().playSound("tetrisclear", 0);
+	}
+
+	
+
+	
+
+	m_pSpaceShip->setDistance(m_pSpaceShip->getTransform()->position, m_pTarget->getTransform()->position);
 
 	if (m_pSpaceShip->getFleeing())
 	{
@@ -136,6 +132,7 @@ void PlayScene::handleEvents()
 		m_pSpaceShip->setRotation(0.0f);
 		m_pSpaceShip->getTransform()->position = glm::vec2(10.0f, 10.0f);
 		m_pSpaceShip->setDestination(m_pTarget->getTransform()->position);
+		m_pSpaceShip->setMaxSpeed(3.0f);
 		//disabling other functions.
 		m_pSpaceShip->setFleeing(false);
 		m_pSpaceShip->setAvoiding(false);
@@ -157,6 +154,7 @@ void PlayScene::handleEvents()
 		m_pSpaceShip->setRotation(-45.0f);
 		m_pSpaceShip->getTransform()->position = glm::vec2(400.0f, 300.0f);
 		m_pSpaceShip->setFleeDestination(m_pTarget->getTransform()->position, m_pSpaceShip->getTransform()->position);
+		m_pSpaceShip->setMaxSpeed(3.0f);
 		//enabling flee function.
 		m_pSpaceShip->setFleeing(true);
 		//disabling other functions.
@@ -179,6 +177,7 @@ void PlayScene::handleEvents()
 		m_pSpaceShip->setRotation(0.0f);
 		m_pSpaceShip->getTransform()->position = glm::vec2(600.0f, 300.0f);
 		m_pSpaceShip->setArriveDestination(m_pTarget->getTransform()->position, m_pSpaceShip->getTransform()->position, m_pTarget->m_destination);
+		m_pSpaceShip->setMaxSpeed(3.0f);
 		//disabling other functions.
 		m_pSpaceShip->setFleeing(false);
 		m_pSpaceShip->setAvoiding(false);
@@ -203,6 +202,7 @@ void PlayScene::handleEvents()
 		//Initiating Marvin.
 		m_pSpaceShip->getTransform()->position = glm::vec2(10.0f, 200.0f);
 		m_pSpaceShip->setDestination(m_pTarget->getTransform()->position);
+		m_pSpaceShip->setMaxSpeed(3.0f);
 		m_pSpaceShip->setRotation(90.0f);
 		//Enabling Avoid Function.
 		m_pSpaceShip->setAvoiding(true);
@@ -217,6 +217,7 @@ void PlayScene::handleEvents()
 		
 		m_pSpaceShip->setEnabled(false);
 		m_pSpaceShip->getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
+		m_pSpaceShip->setMaxSpeed(3.0f);
 		m_pSpaceShip->setRotation(0.0f); //set angle to 0 degrees
 		m_pSpaceShip->setFleeing(false);
 		m_pSpaceShip->setAvoiding(false);
@@ -228,6 +229,19 @@ void PlayScene::handleEvents()
 
 void PlayScene::start()
 {
+	SoundManager::Instance().load("../Assets/audio/tetris.mp3", "tetris", SOUND_MUSIC);
+
+	SoundManager::Instance().playMusic("tetris", 1, 0);
+
+	SoundManager::Instance().setMusicVolume(15);
+
+	
+
+	
+	const SDL_Color magenta = { 202, 31, 123, 255 };
+	m_pControl1 = new Label("` - ImGui | Spacebar - Reset | 1 - Seek | 2 - Flee | 3 - Arrive | 4 - Avoid", "Brooklyn", 30, magenta, glm::vec2(400.0f, 40.0f));
+	m_pControl1->setParent(this);
+	addChild(m_pControl1);
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
 

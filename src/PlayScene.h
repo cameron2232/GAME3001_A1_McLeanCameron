@@ -31,14 +31,13 @@ private:
 	std::string m_guiTitle;
 	
 	glm::vec2 m_mousePosition;
-
 	
 
-	bool isFleeing;
-
+	Label* m_pControl1;
 	SpaceShip* m_pSpaceShip;
 	Target* m_pTarget;
 	Obstacle* m_pObstacle;
+	
 	// UI Items
 	
 };
