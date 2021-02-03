@@ -24,7 +24,7 @@ SpaceShip::SpaceShip()
 	setTurnRate(4.0f);
 
 	SoundManager::Instance().load("../Assets/audio/Explosion.ogg", "tetrisclear", SOUND_SFX);
-	SoundManager::Instance().setSoundVolume(75);
+	SoundManager::Instance().setSoundVolume(25);
 	
 }
 
@@ -166,7 +166,7 @@ bool SpaceShip::getColliding() const
 void SpaceShip::setDistance(glm::vec2 player, glm::vec2 target)
 {
 	m_distance = sqrt(((target.x - player.x) * (target.x - player.x)) + ((target.y - player.y) * (target.y - player.y)));
-	std::cout << m_distance << std::endl;
+	//std::cout << m_distance << std::endl;
 }
 
 int SpaceShip::getDistance() const

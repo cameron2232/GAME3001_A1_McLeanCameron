@@ -26,7 +26,7 @@ Obstacle::~Obstacle()
 void Obstacle::draw()
 {
 	TextureManager::Instance()->draw("obstacle", 
-		getTransform()->position.x, getTransform()->position.y, 0, 255, true);
+		getTransform()->position.x, getTransform()->position.y, 0, 255, false);
 }
 
 void Obstacle::update()
@@ -100,12 +100,12 @@ void Obstacle::setTargetNode(glm::vec2 target, glm::vec2 obstacle, glm::vec2 pla
 			}
 		}
 	}
-	std::cout << "x: " << m_targetnode.x << " y: " << m_targetnode.y << std::endl;
+	//std::cout << "x: " << m_targetnode.x << " y: " << m_targetnode.y << std::endl;
 }
 
 glm::vec2 Obstacle::getTargetNode() const
 {
-	std::cout << "x: " << m_targetnode.x << "y: " << m_targetnode.y << std::endl;
+	//std::cout << "x: " << m_targetnode.x << "y: " << m_targetnode.y << std::endl;
 	return m_targetnode;
 }
 
