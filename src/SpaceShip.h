@@ -45,6 +45,9 @@ public:
 	void setFleeing(bool flee);
 	bool getFleeing() const;
 
+	void setColliding(bool collision);
+	bool getColliding() const;
+
 	void setDistance(glm::vec2 player, glm::vec2 target);
 	int getDistance() const;
 	friend class PlayScene;
@@ -63,6 +66,7 @@ private:
 	int m_distance;
 	bool m_fleeing;
 	bool m_avoiding;
+	bool m_colliding;
 	Line m_leftWhisker, m_rightWhisker, m_targetWhisker;
 
 	// private function

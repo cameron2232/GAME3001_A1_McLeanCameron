@@ -51,11 +51,6 @@ void PlayScene::update()
 
 	if (m_pSpaceShip->getAvoiding())
 	{
-		if (CollisionManager::lineRectCheck(m_pSpaceShip->m_rightWhisker.Start(), m_pSpaceShip->m_rightWhisker.End(),
-			(m_pObstacle->getTransform()->position - glm::vec2(100.0f, 50.0f)), 200.0f, 100.0f))
-		{
-			
-		}
 		
 		m_pObstacle->setTargetNode(m_pTarget->getTransform()->position, m_pObstacle->getTransform()->position, m_pSpaceShip->getTransform()->position);
 		if (CollisionManager::lineRectCheck(m_pSpaceShip->m_targetWhisker.Start(), m_pSpaceShip->m_targetWhisker.End(),
@@ -76,12 +71,12 @@ void PlayScene::update()
 		m_pSpaceShip->setMaxSpeed(1.5f);
 	}
 
-	if(m_pSpaceShip->getDistance() <= 15)
+	if(CollisionManager::AABBCheck(m_pSpaceShip, m_pTarget)) //marvin finds her peanut
 	{
-		m_pSpaceShip->setMaxSpeed(0.0f); 
-		
-		SoundManager::Instance().playSound("tetrisclear", 0);
+		m_pSpaceShip->setColliding(true);
+		m_pTarget->setArriving(false);
 	}
+	
 
 	
 
@@ -136,6 +131,7 @@ void PlayScene::handleEvents()
 		//disabling other functions.
 		m_pSpaceShip->setFleeing(false);
 		m_pSpaceShip->setAvoiding(false);
+		m_pSpaceShip->setColliding(false);
 		m_pSpaceShip->setEnabled(true);
 
 		m_pObstacle->setEnabled(false);
@@ -160,6 +156,7 @@ void PlayScene::handleEvents()
 		//disabling other functions.
 		m_pSpaceShip->setAvoiding(false);
 		m_pSpaceShip->setEnabled(true);
+		m_pSpaceShip->setColliding(false);
 
 		m_pObstacle->setEnabled(false);
 	}
@@ -181,6 +178,7 @@ void PlayScene::handleEvents()
 		//disabling other functions.
 		m_pSpaceShip->setFleeing(false);
 		m_pSpaceShip->setAvoiding(false);
+		m_pSpaceShip->setColliding(false);
 		m_pSpaceShip->setEnabled(true);
 
 		m_pObstacle->setEnabled(false);
@@ -199,6 +197,7 @@ void PlayScene::handleEvents()
 		
 		//disabling other functions.
 		m_pSpaceShip->setFleeing(false);
+		m_pSpaceShip->setColliding(false);
 		//Initiating Marvin.
 		m_pSpaceShip->getTransform()->position = glm::vec2(10.0f, 200.0f);
 		m_pSpaceShip->setDestination(m_pTarget->getTransform()->position);
@@ -221,6 +220,7 @@ void PlayScene::handleEvents()
 		m_pSpaceShip->setRotation(0.0f); //set angle to 0 degrees
 		m_pSpaceShip->setFleeing(false);
 		m_pSpaceShip->setAvoiding(false);
+		m_pSpaceShip->setColliding(false);
 		m_pObstacle->setEnabled(false);
 	}
 
@@ -312,7 +312,7 @@ void PlayScene::GUI_Function() const
 		//disabling other functions.
 		m_pSpaceShip->setFleeing(false);
 		m_pSpaceShip->setAvoiding(false);
-
+		m_pSpaceShip->setColliding(false);
 		m_pSpaceShip->setEnabled(true);
 
 		m_pObstacle->setEnabled(false);
@@ -332,6 +332,8 @@ void PlayScene::GUI_Function() const
 		m_pSpaceShip->setFleeing(true);
 		m_pSpaceShip->setAvoiding(false);
 		m_pSpaceShip->setEnabled(true);
+		m_pSpaceShip->setColliding(false);
+		
 		m_pObstacle->setEnabled(false);
 	}
 
@@ -349,6 +351,8 @@ void PlayScene::GUI_Function() const
 		m_pSpaceShip->setFleeing(false);
 		m_pSpaceShip->setAvoiding(false);
 		m_pSpaceShip->setEnabled(true);
+		m_pSpaceShip->setColliding(false);
+		
 		m_pObstacle->setEnabled(false);
 	}
 
@@ -365,6 +369,7 @@ void PlayScene::GUI_Function() const
 		m_pSpaceShip->setDestination(m_pTarget->getTransform()->position);
 		m_pSpaceShip->setRotation(90.0f);
 		m_pSpaceShip->setAvoiding(true);
+		m_pSpaceShip->setColliding(false);
 		m_pSpaceShip->setEnabled(true);
 	}
 
@@ -379,6 +384,7 @@ void PlayScene::GUI_Function() const
 		m_pSpaceShip->setRotation(0.0f); //set angle to 0 degrees
 		m_pSpaceShip->setFleeing(false);
 		m_pSpaceShip->setAvoiding(false);
+		m_pSpaceShip->setColliding(false);
 		m_pObstacle->setEnabled(false);
 		turn_rate = 5.0f;
 		acceleration_rate = 2.0f;

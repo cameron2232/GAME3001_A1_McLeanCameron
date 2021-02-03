@@ -23,7 +23,7 @@ SpaceShip::SpaceShip()
 	setAccelerationRate(5.0f);
 	setTurnRate(4.0f);
 
-	SoundManager::Instance().load("../Assets/audio/tetrisclear.ogg", "tetrisclear", SOUND_SFX);
+	SoundManager::Instance().load("../Assets/audio/Explosion.ogg", "tetrisclear", SOUND_SFX);
 	SoundManager::Instance().setSoundVolume(75);
 	
 }
@@ -34,11 +34,11 @@ SpaceShip::~SpaceShip()
 void SpaceShip::draw()
 {
 	TextureManager::Instance()->draw("spaceship", 
-		getTransform()->position.x, getTransform()->position.y, m_rotationAngle, 255, true);
+		getTransform()->position.x, getTransform()->position.y, m_rotationAngle, 255, false);
 
 	//Util::DrawLine(getTransform()->position, m_destination);
-	Util::DrawLine(m_leftWhisker.Start(), m_leftWhisker.End());
-	Util::DrawLine(m_rightWhisker.Start(), m_rightWhisker.End());
+	/*Util::DrawLine(m_leftWhisker.Start(), m_leftWhisker.End());
+	Util::DrawLine(m_rightWhisker.Start(), m_rightWhisker.End());*/
 	Util::DrawLine(m_targetWhisker.Start(), m_targetWhisker.End());
 }
 
@@ -51,8 +51,11 @@ void SpaceShip::update()
 	m_targetWhisker.SetLine(getTransform()->position,
 		getTargetLoc());
 
-
-	m_Move();
+	if(!m_colliding)
+	{
+		m_Move();
+	}
+	
 		
 
 	//m_Move();
@@ -148,6 +151,16 @@ void SpaceShip::setFleeing(bool flee)
 bool SpaceShip::getFleeing() const
 {
 	return m_fleeing;
+}
+
+void SpaceShip::setColliding(bool collision)
+{
+	m_colliding = collision;
+}
+
+bool SpaceShip::getColliding() const
+{
+	return m_colliding;
 }
 
 void SpaceShip::setDistance(glm::vec2 player, glm::vec2 target)
